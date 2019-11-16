@@ -11,7 +11,17 @@ if (location.pathname === "/showthread.php") {
             for (let i = 0; i < $posts.length; i++) {
                 let $post = $($posts[i]);
                 posts.push({
-                    author: $post.find(".author_information").find(".largetext").text().trim(),
+                    author: {
+                        name: $post.find(".author_information").find(".largetext").text().trim(),
+                        stats: {
+                            posts: "",
+                            threads: "",
+                            bRating: "",
+                            popularity: "",
+                            bytes: "",
+                            gamexp: ""
+                        }
+                    },
                     content: $post.find(".post_content").text().trim(),
                     id: $post.attr("id")
                 });
@@ -27,7 +37,12 @@ if (location.pathname === "/showthread.php") {
         data: data
     });
 
-    window.close();
+    if ( /* last page */ ) {
+        window.close();
+    } else {
+        location.href = "&page" + currpage + 1;
+    }
+
 } else if (location.pathname === "/forumdisplay.php") {
     let $articles = $(document).find(".subject_old,.subject_new");
     for (let i = 0; i < $articles.length; i++) {

@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "one crawly boi",
     "version": "3.5.11",
-    "description": "Everykey unlocks your devices and logs you into websites when you're around, then locks it all back down when you're not.",
+    "description": "",
     "icons": {
         "128": "images/icon.png"
     },

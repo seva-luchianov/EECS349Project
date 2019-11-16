@@ -25,7 +25,7 @@ const onMessage = {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
-    onMessage[request.command](request.data, sendResponse);
+    onMessage[request.command](request.data);
 });
 
 setInterval(function() {
@@ -37,3 +37,24 @@ setInterval(function() {
         });
     }
 }, 5000);
+
+function stats() {
+    authors = {};
+    for (const article of articles) {
+        // do stats
+        incremenentVal(authors, article.posts[0].author.name);
+    }
+    console.log(authors);
+}
+
+function incremenentVal(obj, val) {
+    if (obj[val]) {
+        obj[val]++;
+    } else {
+        obj[val] = 1;
+    }
+}
+
+chrome.storage.local.set({
+    articles: articles
+});
