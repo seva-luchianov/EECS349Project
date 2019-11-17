@@ -1,4 +1,3 @@
-const mkdirp = require('mkdirp');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,12 +8,8 @@ const {
 
 let i = 0;
 
-function range(s, e) {
-    return Array.from('x'.repeat(e - s), (_, i) => s + i);
-}
-
 Object.values(data).forEach(function(article) {
-    console.log("Start parsing " + i + " " + article.title);
+    console.log(`Start parsing ${i} ${article.title}`);
 
     if (!article.posts.length) {
         return;
@@ -50,7 +45,7 @@ Object.values(data).forEach(function(article) {
         //console.log(csv);
         let fullPath = path.join(__dirname, 'csv');
         fs.writeFileSync(`${fullPath}/article${i}.csv`, csv);
-        console.log("Finished parsing " + i + " " + article.title);
+        console.log(`Finish parsing ${i} ${article.title}`);
         i++;
     } catch (err) {
         console.error(err);
@@ -83,11 +78,4 @@ function parsePost(post) {
         }(),
         content: JSON.stringify(post.content)
     };
-}
-
-function writeFile(name, contents, cb) {
-    let fullPath = path.join(__dirname, 'csv');
-    mkdirp(fullPath, function() {
-        fs.writeFileSync(`${fullPath}/${name}.csv`, contents);
-    });
 }
