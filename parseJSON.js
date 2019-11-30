@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let data = require('./data/parsed2.json');
+let data = require('./data/parsed3.json');
 const {
     parse
 } = require('json2csv');
@@ -25,7 +25,7 @@ Object.values(data).forEach(function(article) {
         'Product/service name': article.title,
         'Replies': article.replies,
         'Views': article.views,
-        'Category': 'Keyloggers',
+        'Category': 'CaaS',
         'Price': '',
         'Unit': '',
         'Payment method': ''

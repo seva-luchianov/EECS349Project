@@ -78,6 +78,24 @@ if (location.pathname === "/showthread.php") {
             }
         });
     }
+} else if (location.pathname === "/search.php") {
+    let $articles = $(document).find(".inline_row");
+    for (let i = 0; i < $articles.length; i++) {
+        let $article = $($articles[i]);
+        let $link = $article.find("a").first();
+        let $stats = $article.closest("tr").children();
+        let url = $link.attr("href");
+        chrome.runtime.sendMessage({
+            command: "parse-article",
+            data: {
+                url: "https://hackforums.net/" + url + "&page=1",
+                tid: qs.parse(url.substr(url.indexOf("?"), url.length)).tid,
+                title: $link.text().trim(),
+                replies: $stats[4].innerText,
+                views: $stats[5].innerText
+            }
+        });
+    }
 } else {
     console.log("dont run on", location.pathname);
 }
