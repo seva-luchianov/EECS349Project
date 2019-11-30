@@ -1,67 +1,95 @@
 const fs = require('fs');
 const path = require('path');
 
-let data = require('./data/parsed.json');
+let data = require('./data/parsed2.json');
 const {
     parse
 } = require('json2csv');
 
-let i = 0;
+let productRows = [];
+
+let responseRows = [];
 
 Object.values(data).forEach(function(article) {
-    console.log(`Start parsing ${i} ${article.title}`);
+    console.log(`Start parsing ${article.title}`);
 
     if (!article.posts.length) {
         return;
     }
 
-    let rows = [Object.assign({
-        title: article.title,
-        url: article.url,
-        tid: article.tid,
-        post: 0,
-    }, parsePost(article.posts[0]))];
+    productRows.push(Object.assign({
+        'Thread_id': article.tid,
+        'Thread_link': article.url,
+        'Market': "HackFormus",
+        'Vendor name': article.posts[0].author.name,
+        'Product/service name': article.title,
+        'Replies': article.replies,
+        'Views': article.views,
+        'Category': 'Keyloggers',
+        'Price': '',
+        'Unit': '',
+        'Payment method': ''
+    }, parsePost(article.posts[0])));
 
-    for (let index = 1; index < article.posts.length; index++) {
-        rows.push(Object.assign({
-            post: index
-        }, parsePost(article.posts[index])));
+    for (let i = 1; i < article.posts.length; i++) {
+        responseRows.push(Object.assign({
+            'Thread_id': article.tid,
+            'Floor_number': i
+        }, parsePost(article.posts[i])));
     }
 
-    try {
-        let csv = parse(rows, {
-            fields: [
-                'title',
-                'url',
-                'tid',
-                'post',
-                'username',
-                'trade',
-                'review',
-                'qa',
-                'content'
-            ]
-        });
-        //console.log(csv);
-        let fullPath = path.join(__dirname, 'csv');
-        fs.writeFileSync(`${fullPath}/article${i}.csv`, csv);
-        console.log(`Finish parsing ${i} ${article.title}`);
-        i++;
-    } catch (err) {
-        console.error(err);
-    }
+    //console.log(csv);
+    console.log(`Finish parsing ${article.title}`);
 });
+
+try {
+    let fullPath = path.join(__dirname, 'csv');
+
+
+    fs.writeFileSync(`${fullPath}/MainData.csv`, parse(productRows, {
+        fields: [
+            'Thread_id',
+            'Thread_link',
+            'Market',
+            'Vendor name',
+            'Product/service name',
+            'Replies',
+            'Views',
+            'Category',
+            'Price',
+            'Unit',
+            'Payment method'
+        ]
+    }));
+
+    fs.writeFileSync(`${fullPath}/RepliesData.csv`, parse(responseRows, {
+        fields: [
+            'Thread_id',
+            'Comment_link',
+            'Floor_number',
+            'User name',
+            'Trade',
+            'Review',
+            'Q&A',
+            'Content',
+        ]
+    }));
+} catch (err) {
+    console.error(err);
+}
 
 function parsePost(post) {
     return {
-        username: post.author.name,
-        trade: function() {
+        'Comment_link': post.url,
+        'Market': "Hack Forums",
+        "User name": post.author.name,
+        'Trade': function() {
             if (post.hasOwnProperty("trade")) {
                 return post.trade;
             }
             return "";
         }(),
-        review: function() {
+        'Review': function() {
             if (post.hasOwnProperty("review")) {
                 if (post.review) {
                     return post.review > 0 ? "positive" : "negative";
@@ -70,12 +98,12 @@ function parsePost(post) {
             }
             return "";
         }(),
-        qa: function() {
+        'Q&A': function() {
             if (post.hasOwnProperty("qa")) {
                 return post.qa ? 1 : 0;
             }
             return "";
         }(),
-        content: JSON.stringify(post.content)
+        'Content': JSON.stringify(post.content)
     };
 }

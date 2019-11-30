@@ -14,6 +14,8 @@ const onMessage = {
             url: data.url,
             tid: data.tid,
             title: data.title,
+            replies: data.replies,
+            views: data.views,
             posts: []
         };
         chrome.tabs.create({

@@ -5,7 +5,7 @@ if (location.pathname === "/showthread.php") {
     let q = qs.parse(location.search);
     console.log("parsed query string", q);
 
-    let currPage = document.getElementsByClassName("pagination_current")[0].innerText * 1;
+    let currPage = getCurrPage();
     if (currPage != q.page) {
         console.log("reached end of thread!");
         chrome.runtime.sendMessage({
@@ -14,7 +14,6 @@ if (location.pathname === "/showthread.php") {
                 tid: q.tid
             }
         });
-        window.close();
     } else {
         const $article = $(document).find('article');
 
@@ -40,7 +39,8 @@ if (location.pathname === "/showthread.php") {
                             }()
                         },
                         content: $post.find(".post_content").text().trim(),
-                        id: $post.attr("id")
+                        id: $post.attr("id"),
+                        url: location.href
                     });
                 }
                 return posts;
@@ -80,4 +80,13 @@ if (location.pathname === "/showthread.php") {
     }
 } else {
     console.log("dont run on", location.pathname);
+}
+
+function getCurrPage() {
+    let currPageElements = document.getElementsByClassName("pagination_current");
+    if (currPageElements.length) {
+        return currPageElements[0].innerText * 1;
+    } else {
+        return 1;
+    }
 }
